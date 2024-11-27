@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { useTimeManager } from "@/hooks/useTimeManager";
@@ -9,66 +9,81 @@ import { CountdownCard } from "@/components/CountdownCard";
 import { AddConference } from "@/components/AddConference";
 import {
   getLocalTimezoneInfo,
-  loadUserConferences,
   saveUserConferences,
-  loadSelectedDeadlines,
   saveSelectedDeadlines,
-  getDeadlineStatus,
-  getDeadlineGradient,
 } from "@/lib/utils";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const [selectedConferences, setSelectedConferences] = useState([]);
+  const {
+    isLoading,
+    userConferences,
+    selectedConferences,
+    setUserConferences,
+    setSelectedConferences,
+  } = useLocalStorage();
+
   const { localTime, aoeTime } = useTimeManager();
   const { location: userLocation } = getLocalTimezoneInfo();
-  const [userConferences, setUserConferences] = useState([]);
 
-  useEffect(() => {
-    setUserConferences(loadUserConferences());
-    setSelectedConferences(loadSelectedDeadlines());
-  }, []);
+  const handleSelectConference = useCallback(
+    (conference, deadline) => {
+      const newConference = {
+        ...conference,
+        deadline,
+        originalDeadline: conference.deadline,
+      };
+      setSelectedConferences((prev) => {
+        const exists = prev.find(
+          (c) => c.id === conference.id && c.deadline === deadline
+        );
+        const updated = exists
+          ? prev.filter((c) => c !== exists)
+          : [...prev, newConference];
+        saveSelectedDeadlines(updated);
+        return updated;
+      });
+    },
+    [setSelectedConferences]
+  );
 
-  const handleSelectConference = useCallback((conference, deadline) => {
-    const newConference = {
-      ...conference,
-      deadline,
-      originalDeadline: conference.deadline,
-    };
-    setSelectedConferences((prev) => {
-      const exists = prev.find(
-        (c) => c.id === conference.id && c.deadline === deadline
-      );
-      const updated = exists
-        ? prev.filter((c) => c !== exists)
-        : [...prev, newConference];
-      saveSelectedDeadlines(updated);
-      return updated;
-    });
-  }, []);
+  const handleAddConference = useCallback(
+    (conference) => {
+      setUserConferences((prev) => {
+        const updated = [...prev, conference];
+        saveUserConferences(updated);
+        return updated;
+      });
+    },
+    [setUserConferences]
+  );
 
-  const handleAddConference = useCallback((conference) => {
-    setUserConferences((prev) => {
-      const updated = [...prev, conference];
-      saveUserConferences(updated);
-      return updated;
-    });
-  }, []);
-
-  const handleRemoveConference = useCallback((conferenceToRemove) => {
-    setSelectedConferences((prev) => {
-      const updated = prev.filter((c) => c !== conferenceToRemove);
-      saveSelectedDeadlines(updated);
-      return updated;
-    });
-  }, []);
+  const handleRemoveConference = useCallback(
+    (conferenceToRemove) => {
+      setSelectedConferences((prev) => {
+        const updated = prev.filter((c) => c !== conferenceToRemove);
+        saveSelectedDeadlines(updated);
+        return updated;
+      });
+    },
+    [setSelectedConferences]
+  );
 
   const allConferences = useMemo(
     () => [...conferences, ...userConferences],
     [userConferences]
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
