@@ -11,6 +11,8 @@ import {
   getLocalTimezoneInfo,
   saveUserConferences,
   saveSelectedDeadlines,
+  getDeadlineStatus,
+  getDeadlineGradient,
 } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Button } from "@/components/ui/button";
