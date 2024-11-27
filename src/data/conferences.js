@@ -30,12 +30,4 @@ export const conferences = [
     website: "https://ivapp.scitevents.org/",
     location: "Porto, Portugal",
   },
-  {
-    id: 4,
-    name: "EVA London 2025",
-    fullName: "Electronic Visualisation & the Arts Conference",
-    deadline: "2025-07-07",
-    website: "http://www.eva-london.org/",
-    location: "London, England",
-  },
 ];

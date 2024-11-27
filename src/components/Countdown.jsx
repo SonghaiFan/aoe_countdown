@@ -2,6 +2,14 @@ import { formatCountdown } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export function CountdownDisplay({ timeRemaining, status }) {
+  if (timeRemaining == 0) {
+    return (
+      <p className="text-center text-red-600 dark:text-red-400 font-medium">
+        Deadline has passed
+      </p>
+    );
+  }
+
   if (!timeRemaining) {
     return (
       <p className="text-center text-muted-foreground">
