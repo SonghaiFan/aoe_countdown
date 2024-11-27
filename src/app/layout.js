@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Head from "next/head";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,6 +17,22 @@ export const metadata = {
   title: "Paper Deadline Countdown | AoE Time",
   description:
     "Track academic conference deadlines in Anywhere on Earth (AoE) timezone. Never miss a paper submission deadline again.",
+  icons: {
+    icon: [
+      {
+        url: "/images/deadline.png",
+        sizes: "48x48",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/images/deadline.png",
+        sizes: "48x48",
+        type: "image/png",
+      },
+    ],
+  },
   keywords: [
     "academic conference",
     "paper deadline",
@@ -45,9 +62,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="light">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#ffffff" />
+        <link rel="icon" href="/images/deadline.png" />
+        <link rel="apple-touch-icon" href="/images/deadline.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

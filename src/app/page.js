@@ -18,6 +18,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function Home() {
   const {
@@ -92,10 +93,20 @@ export default function Home() {
       <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight">
-              Paper Deadline Countdown
-            </h1>
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-4">
+              <Image
+                src="/images/deadline.png"
+                alt="Deadline Icon"
+                width={48}
+                height={48}
+                priority
+                className="w-12 h-12 object-contain"
+              />
+              <h1 className="text-4xl font-bold tracking-tight">
+                Paper Deadline Countdown
+              </h1>
+            </div>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Never miss a deadline again! This countdown shows the time
               remaining until your paper submission is due. Using "Anywhere on
