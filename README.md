@@ -1,8 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Paper Deadline Countdown
+
+A Next.js application to track academic conference deadlines in Anywhere on Earth (AoE) timezone. Never miss a paper submission deadline again!
+
+## Features
+
+- Track multiple conference deadlines simultaneously
+- Support for both abstract and full paper deadlines
+- Visual indicators for deadline urgency
+- Local storage persistence for user-added conferences
+- Real-time countdown in AoE timezone
+- Responsive design for all devices
+- Dark mode support
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -10,27 +32,66 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 14
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui
+- **Date Handling**: date-fns
+- **Icons**: Lucide React
+- **Fonts**: Geist Sans & Geist Mono
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                # Next.js app directory
+├── components/         # React components
+│   ├── ui/            # Shadcn UI components
+│   └── ...            # Custom components
+├── lib/               # Utility functions
+├── hooks/             # Custom React hooks
+└── data/              # Conference data
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features in Detail
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Time Display
 
-## Deploy on Vercel
+- Shows both local time and AoE (UTC-12) time
+- Displays user's location based on timezone
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Conference Management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Built-in list of visualization conferences
+- Add custom conferences with abstract/paper deadlines
+- Persistent storage of user-added conferences
+
+### Countdown Display
+
+- Real-time countdown to deadlines
+- Color-coded status indicators:
+  - Green: Safe (> 30 days)
+  - Blue: Approaching (≤ 30 days)
+  - Yellow: Urgent (≤ 7 days)
+  - Orange: Critical (≤ 3 days)
+  - Red: Expired
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT License - feel free to use this project for your own purposes.
+
+## Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Icons from [Lucide](https://lucide.dev/)
+- Fonts from [Vercel](https://vercel.com/font)
