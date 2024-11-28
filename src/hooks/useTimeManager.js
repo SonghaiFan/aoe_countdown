@@ -6,34 +6,25 @@ export function useTimeManager(deadline) {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const timerRef = useRef(null);
 
-  // Create formatters once
-  const aoeFormatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Etc/GMT+12",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: true,
-  });
-
   useEffect(() => {
     const updateTimes = () => {
+      // 1. Get current local time
       const now = new Date();
-
-      // Set local time
       setLocalTime(now);
 
-      // Get AoE time
+      // 2. Convert current time to AoE (UTC-12)
       const aoeDate = new Date(
         now.toLocaleString("en-US", { timeZone: "Etc/GMT+12" })
       );
       setAoeTime(aoeDate);
 
       if (deadline) {
-        // Since deadline is already in AoE, create end of day deadline
+        // 3. The deadline is already in AoE timezone
         const aoeDeadline = new Date(deadline);
-        aoeDeadline.setUTCHours(23, 59, 59, 999);
+        // Set to end of day in AoE
+        aoeDeadline.setHours(23, 59, 59, 999);
 
-        // Calculate time remaining
+        // 4. Calculate remaining time between current AoE time and deadline
         const diff = Math.floor((aoeDeadline - aoeDate) / 1000);
         setTimeRemaining(diff > 0 ? diff : 0);
       }

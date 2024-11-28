@@ -148,7 +148,7 @@ export const ConferenceList = memo(function ConferenceList({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
                     {typeof conference.deadline === "object" ? (
                       <>
                         <DeadlineBadge
