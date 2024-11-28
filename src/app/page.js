@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { useTimeManager } from "@/hooks/useTimeManager";
@@ -16,9 +16,11 @@ import {
 } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+
+const HIDDEN_CONFERENCES_KEY = "hiddenConferences";
 
 export default function Home() {
   const {
@@ -28,6 +30,14 @@ export default function Home() {
     setUserConferences,
     setSelectedConferences,
   } = useLocalStorage();
+
+  const [hiddenConferences, setHiddenConferences] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem(HIDDEN_CONFERENCES_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
 
   const { localTime, aoeTime } = useTimeManager();
   const { location: userLocation } = getLocalTimezoneInfo();
@@ -74,6 +84,47 @@ export default function Home() {
     },
     [setSelectedConferences]
   );
+
+  const handleDeleteConference = useCallback(
+    (conferenceId) => {
+      setUserConferences((prev) => {
+        const updated = prev.filter((c) => c.id !== conferenceId);
+        saveUserConferences(updated);
+        return updated;
+      });
+
+      // Also remove from selected conferences if it was selected
+      setSelectedConferences((prev) => {
+        const updated = prev.filter((c) => c.id !== conferenceId);
+        saveSelectedDeadlines(updated);
+        return updated;
+      });
+    },
+    [setUserConferences, setSelectedConferences]
+  );
+
+  const handleHideConference = useCallback(
+    (conferenceId) => {
+      setHiddenConferences((prev) => {
+        const updated = [...prev, conferenceId];
+        localStorage.setItem(HIDDEN_CONFERENCES_KEY, JSON.stringify(updated));
+        return updated;
+      });
+
+      // Also remove from selected conferences if it was selected
+      setSelectedConferences((prev) => {
+        const updated = prev.filter((c) => c.id !== conferenceId);
+        saveSelectedDeadlines(updated);
+        return updated;
+      });
+    },
+    [setSelectedConferences]
+  );
+
+  const handleShowAllConferences = useCallback(() => {
+    setHiddenConferences([]);
+    localStorage.removeItem(HIDDEN_CONFERENCES_KEY);
+  }, []);
 
   const allConferences = useMemo(
     () => [...conferences, ...userConferences],
@@ -196,11 +247,26 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <CardTitle>Conference Deadlines</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    All deadlines are in AoE (UTC-12) timezone
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">
+                      All deadlines are in AoE (UTC-12) timezone
+                    </p>
+                  </div>
                 </div>
-                <AddConference onAdd={handleAddConference} />
+                <div className="flex items-center gap-4">
+                  {hiddenConferences.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleShowAllConferences}
+                      className="text-sm flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      Show {hiddenConferences.length} hidden
+                    </Button>
+                  )}
+                  <AddConference onAdd={handleAddConference} />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -208,6 +274,9 @@ export default function Home() {
                 conferences={allConferences}
                 onSelectConference={handleSelectConference}
                 selectedConferences={selectedConferences}
+                onDelete={handleDeleteConference}
+                onHide={handleHideConference}
+                hiddenConferences={hiddenConferences}
               />
             </CardContent>
           </Card>

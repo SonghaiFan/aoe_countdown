@@ -11,11 +11,16 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getDeadlineStatus } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Trash2, EyeOff } from "lucide-react";
 
 export const ConferenceList = memo(function ConferenceList({
   conferences,
   onSelectConference,
   selectedConferences,
+  onDelete,
+  onHide,
+  hiddenConferences,
 }) {
   const formatDeadline = useCallback((deadline) => {
     if (typeof deadline === "string") {
@@ -100,10 +105,12 @@ export const ConferenceList = memo(function ConferenceList({
             <TableHead>Conference</TableHead>
             <TableHead>Deadlines</TableHead>
             <TableHead>Location</TableHead>
+            <TableHead className="w-[100px]"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {conferences
+            .filter((conference) => !hiddenConferences.includes(conference.id))
             .sort(
               (a, b) =>
                 getNextDeadline(a.deadline) - getNextDeadline(b.deadline)
@@ -111,12 +118,20 @@ export const ConferenceList = memo(function ConferenceList({
             .map((conference) => (
               <TableRow
                 key={conference.id}
-                className="hover:bg-muted/50 transition-colors"
+                className={cn(
+                  "hover:bg-muted/50 transition-colors",
+                  conference.id > 3 && "bg-muted/30"
+                )}
               >
                 <TableCell>
                   <div className="space-y-1">
                     <div className="font-medium flex items-center gap-2">
                       {conference.name}
+                      {conference.id > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          User Added
+                        </Badge>
+                      )}
                       <a
                         href={conference.website}
                         target="_blank"
@@ -178,6 +193,36 @@ export const ConferenceList = memo(function ConferenceList({
                   </div>
                 </TableCell>
                 <TableCell>{conference.location}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2 justify-end">
+                    {conference.id <= 3 ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onHide(conference.id);
+                        }}
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        title="Hide conference"
+                      >
+                        <EyeOff className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(conference.id);
+                        }}
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>

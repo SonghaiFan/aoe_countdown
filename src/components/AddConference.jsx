@@ -35,10 +35,16 @@ export function AddConference({ onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd({
+    const formattedData = {
       ...formData,
       id: Date.now(),
-    });
+      deadline: {
+        abstract: formData.deadline.abstract?.toISOString() || null,
+        fullPaper: formData.deadline.fullPaper?.toISOString() || null,
+      },
+    };
+
+    onAdd(formattedData);
     setOpen(false);
     setFormData({
       name: "",
